@@ -3,13 +3,13 @@
   "builds": [
     {
       "src": "index.ts",
-      "use": "@vercel-deno"
+      "use": "@vercel/deno"
     }
   ],
   "routes": [
     {
       "src": "/",
-      "dest": "/index.ts"
+      "dest": "index.ts"
     }
   ]
 }
