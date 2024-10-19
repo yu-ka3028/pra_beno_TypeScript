@@ -1,18 +1,19 @@
-const handler = (req: Request): Response => {
-  return new Response("Hello, World!", {
-    status: 200,
-    headers: { "Content-Type": "text/plain" },
+import { serve } from "https://deno.land/std@0.157.0/http/server.ts";
+
+const handler = async (request: Request): Promise<Response> => {
+  const url = "https://pokeapi.co/api/v2/pokemon/pikachu/";
+  const resp = await fetch(url, {
+    headers: {
+      accept: "application/json",
+    },
+  });
+
+  return new Response(resp.body, {
+    status: resp.status,
+    headers: {
+      "content-type": "application/json",
+    },
   });
 };
 
-const server = Deno.listen({ port: 8080 });
-console.log("Listening on http://localhost:8080/");
-
-for await (const conn of server) {
-  (async () => {
-    const httpConn = Deno.upgradeWebSocket(conn);
-    const response = handler(httpConn);
-    await Deno.writeAll(conn, new TextEncoder().encode(await response.text()));
-    conn.close();
-  })();
-}
+serve(handler);
