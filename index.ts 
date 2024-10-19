@@ -1,0 +1,20 @@
+const hostname = "0.0.0.0"; // または "localhost"
+const port = 8080;
+
+const server = Deno.listen({ hostname, port });
+console.log(`Listening on http://${hostname}:${port}/`);
+
+for await (const conn of server) {
+  (async () => {
+    const httpConn = Deno.upgradeWebSocket(conn);
+    const body = new TextEncoder().encode("Welcome to My Deno App!");
+    
+    await Deno.stdout.write(body);
+    const response = new Response("Welcome to My Deno App!", {
+      status: 200,
+      headers: { "Content-Type": "text/plain" },
+    });
+    await Deno.stdout.write(new TextEncoder().encode(await response.text()));
+    conn.close();
+  })();
+}
